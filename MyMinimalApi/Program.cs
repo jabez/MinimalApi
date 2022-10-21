@@ -1,23 +1,28 @@
-using MyMinimalApi.Models;
-using MyMinimalApi.ViewModels.Brands;
+using Microsoft.EntityFrameworkCore;
+using MyMinimalApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContextFactory<MyMinimalApiContext>(options => options.UseInMemoryDatabase($"MyMinimalApiDb"));
 var app = builder.Build();
+
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapPost("/brand",  (PostBrandRequestViewModel requestModel) => 
-{
-    var brand = new Brand()
-    {
-        Id = Guid.NewGuid(),
-        Name = requestModel.Name
-    };
+var scope = app.Services.CreateScope();
 
-    return Results.Created("",brand);
+var databaseContext = scope.ServiceProvider.GetService<MyMinimalApiContext>();
+if (databaseContext != null)
+{
+    databaseContext.Database.EnsureCreated();
+}
+
+app.MapGet("/vhicle", async (IDbContextFactory<MyMinimalApiContext> dbContextFactory) =>
+{
+    using var dbContext = dbContextFactory.CreateDbContext();
+    return  await dbContext.Vehicles.AsNoTracking().ToListAsync();
 });
 
 app.Run();
