@@ -12,7 +12,6 @@ namespace MyMinimalApi.Data
         {
             modelBuilder.Entity<Vehicle>().HasData(new Vehicle
             {
-                Id = Guid.NewGuid(),
                 Name = "Toyota Corolla",
                 Model = "Corolla Cross",
                 StartProduction = DateTime.UtcNow,

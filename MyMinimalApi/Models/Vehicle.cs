@@ -6,7 +6,7 @@
         {
             Id = Guid.NewGuid();
         }
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
         public string Name { get; set; }
         public string Model { get; set; }
         public DateTime StartProduction { get; set; }
